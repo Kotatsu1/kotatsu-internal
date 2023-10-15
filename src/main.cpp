@@ -60,42 +60,6 @@ inline bool LoadImageByMemory(ID3D11Device* device, unsigned char* image, size_t
 	return (hres == S_OK);
 
 }
-std::vector<ScreenCoordinates> coords;
-
-
-void ESPMAIN()
-{
-	while (Globals::esp)
-	{
-		auto cheats = Cheats();
-		std::vector<ScreenCoordinates> localCoords = cheats.ESPThread();
-		coords = localCoords;
-
-		//ImDrawList* drawList = ImGui::GetWindowDrawList();
-
-		/*for (int i = 0; i < coords.size(); i++) 
-		{
-			if (coords[i].X >= 0 && coords[i].X <= 1920 && coords[i].Y >= 0 && coords[i].Y <= 1080)
-			{
-				if (drawList)
-				{
-					float size = 20.0f;
-					ImVec2 p1(coords[i].X, coords[i].Y);
-					ImVec2 p2(coords[i].X + size, coords[i].Y + size);
-					drawList->AddRectFilled(p1, p2, IM_COL32(255, 0, 0, 255));
-				}
-				printf("X: %f\n", coords[i].X);
-				printf("Y: %f\n", coords[i].Y);
-				printf("\n");
-			}
-		}
-		system("cls");*/
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-	}
-}
-
-
-
 
 bool init = false;
 HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
@@ -227,9 +191,6 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 		if (espButton)
 		{
 			Globals::esp = !Globals::esp;
-			
-			std::thread espThread(&ESPMAIN);
-			espThread.detach();
 		}
 	}
 
@@ -254,22 +215,9 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 
 	if (Globals::esp)
 	{
-
-		/*ImGui::SetNextWindowSize(ImVec2(1920, 1080));
-		ImGui::SetNextWindowPos(ImVec2(0, 0));
-		ImGui::Begin(
-			"ESP",
-			NULL,
-			ImGuiWindowFlags_NoTitleBar |
-			ImGuiWindowFlags_NoDecoration |
-			ImGuiWindowFlags_NoMove |
-			ImGuiWindowFlags_NoResize |
-			ImGuiWindowFlags_NoBackground |
-			ImGuiWindowFlags_NoInputs
-		);*/
 		ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
-		auto coords = cheats.ESPThread();
+		auto coords = cheats.ESP();
 		for (auto& pos : coords)
 		{
 			float size = 20.0f;
@@ -277,15 +225,6 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 			ImVec2 p2(pos.X + size, pos.Y + size);
 			drawList->AddRectFilled(p1, p2, IM_COL32(255, 0, 0, 255));
 		}
-
-		/*for (int i = 0; i < coords.size(); i++)
-		{
-			float size = 20.0f;
-			ImVec2 p1(coords[i].X, coords[i].Y);
-			ImVec2 p2(coords[i].X + size, coords[i].Y + size);
-			drawList->AddRectFilled(p1, p2, IM_COL32(255, 0, 0, 255));
-		}*/
-		// ImGui::End();
 	}
 
 

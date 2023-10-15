@@ -16,6 +16,5 @@ public:
 	void GetMyHealth();
 	void BHop();
 	void BHopThread();
-	 std::vector<ScreenCoordinates> ESPThread();
-	void ESP();
+	 std::vector<ScreenCoordinates> ESP();
 };

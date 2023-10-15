@@ -56,14 +56,8 @@ void Cheats::BHop()
 	bhopThread.detach();
 }
 
-//void Cheats::ESP()
-//{
-//	std::thread espThread(&Cheats::ESPThread, this);
-//	espThread.detach();
-//}
 
-
-std::vector<ScreenCoordinates> Cheats::ESPThread()
+std::vector<ScreenCoordinates> Cheats::ESP()
 {
 	const auto client = GetClientDll();
 
@@ -145,8 +139,12 @@ std::vector<ScreenCoordinates> Cheats::ESPThread()
 
 			const Matrix viewMatrix = *reinterpret_cast<Matrix*>(client + Offsets::dwViewMatrix);
 
-			int width = 1920;
-			int height = 1080;
+			RECT desktop;
+			const HWND hDesktop = GetDesktopWindow();
+			GetWindowRect(hDesktop, &desktop);
+
+			const int width = desktop.right;
+			const int height = desktop.bottom;
 
 			float screenW = (viewMatrix.m41 * origin.x) + (viewMatrix.m42 * origin.y) + (viewMatrix.m43 * origin.z) + viewMatrix.m44;
 

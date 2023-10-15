@@ -217,15 +217,24 @@ if (Globals::esp)
 {
     ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
-    auto coords = cheats.ESP();
-    for (auto& pos : coords)
+    auto espData = cheats.ESP();
+    for (auto& data : espData)
     {
-        float height = pos.feetY - pos.headY;
+        float height = data.feetY - data.headY;
 		float width = height / 3.5f;
-        ImVec2 p1(pos.feetX + width, pos.feetY);
-        ImVec2 p2(pos.headX - width, pos.headY);
+        ImVec2 p1(data.feetX + width, data.feetY);
+        ImVec2 p2(data.headX - width, data.headY);
+
+
+		float hpPercent = data.health / 100.f;
+		ImVec2 health1(data.feetX - width, data.feetY);
+		ImVec2 health2(data.feetX - width, data.headY + height - hpPercent * height);
+
+
         drawList->AddRect(p1, p2, IM_COL32(180, 90, 220, 255));
+		drawList->AddRect(health1, health2, IM_COL32(255, 0, 0, 255));
     }
+
 }
 
 

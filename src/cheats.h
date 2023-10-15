@@ -8,12 +8,13 @@ extern struct ScreenCoordinates
 	float Y;
 };
 
-extern struct fullBodyCoordinates
+extern struct espData
 {
 	float feetX;
 	float feetY;
 	float headX;
 	float headY;
+	int health;
 };
 
 extern struct Matrix
@@ -39,5 +40,5 @@ public:
 	void GetMyHealth();
 	void BHop();
 	void BHopThread();
-	 std::vector<fullBodyCoordinates> ESP();
+	 std::vector<espData> ESP();
 };

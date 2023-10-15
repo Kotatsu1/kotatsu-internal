@@ -87,7 +87,7 @@ ScreenCoordinates worldToScreen(Matrix viewMatrix, Vector3 origin)
 }
 
 
-std::vector<fullBodyCoordinates> Cheats::ESP()
+std::vector<espData> Cheats::ESP()
 {
 	const auto client = GetClientDll();
 
@@ -98,7 +98,7 @@ std::vector<fullBodyCoordinates> Cheats::ESP()
 		const int localTeam = *reinterpret_cast<int*>(localPlayer + Offsets::iTeamNum);
 		const float localOrigin = *reinterpret_cast<float*>(localPlayer + Offsets::m_vecOrigin);
 
-		std::vector<fullBodyCoordinates> screenCoordinatesVector;
+		std::vector<espData> espDataVector;
 
 		for (int i = 0; i < 64; i++)
 		{
@@ -157,15 +157,16 @@ std::vector<fullBodyCoordinates> Cheats::ESP()
 			auto feetCoordinates = worldToScreen(viewMatrix, origin);
 			auto headCoordinates = worldToScreen(viewMatrix, head);
 
-			fullBodyCoordinates coordinates;
-			coordinates.feetX = feetCoordinates.X;
-			coordinates.feetY = feetCoordinates.Y;
-			coordinates.headX = headCoordinates.X;
-			coordinates.headY = headCoordinates.Y;
+			espData espData;
+			espData.feetX = feetCoordinates.X;
+			espData.feetY = feetCoordinates.Y;
+			espData.headX = headCoordinates.X;
+			espData.headY = headCoordinates.Y;
+			espData.health = playerHealth;
 
-			screenCoordinatesVector.push_back(coordinates);
+			espDataVector.push_back(espData);
 		}
-		return screenCoordinatesVector;
+		return espDataVector;
 	}
 }
 

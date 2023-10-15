@@ -2,10 +2,33 @@
 #include <stdint.h>
 #include <vector>
 
-struct ScreenCoordinates
+extern struct ScreenCoordinates
 {
 	float X;
 	float Y;
+};
+
+extern struct fullBodyCoordinates
+{
+	float feetX;
+	float feetY;
+	float headX;
+	float headY;
+};
+
+extern struct Matrix
+{
+	float m11, m12, m13, m14;
+	float m21, m22, m23, m24;
+	float m31, m32, m33, m34;
+	float m41, m42, m43, m44;
+};
+
+extern struct Vector3
+{
+	float x;
+	float y;
+	float z;
 };
 
 
@@ -16,5 +39,5 @@ public:
 	void GetMyHealth();
 	void BHop();
 	void BHopThread();
-	 std::vector<ScreenCoordinates> ESP();
+	 std::vector<fullBodyCoordinates> ESP();
 };

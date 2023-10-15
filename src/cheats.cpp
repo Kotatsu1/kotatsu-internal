@@ -56,8 +56,38 @@ void Cheats::BHop()
 	bhopThread.detach();
 }
 
+ScreenCoordinates worldToScreen(Matrix viewMatrix, Vector3 origin)
+{
+	RECT desktop;
+	const HWND hDesktop = GetDesktopWindow();
+	GetWindowRect(hDesktop, &desktop);
 
-std::vector<ScreenCoordinates> Cheats::ESP()
+	const int width = desktop.right;
+	const int height = desktop.bottom;
+
+	float screenW = (viewMatrix.m41 * origin.x) + (viewMatrix.m42 * origin.y) + (viewMatrix.m43 * origin.z) + viewMatrix.m44;
+
+	if (screenW > 0.001f)
+	{
+		float screenX = (viewMatrix.m11 * origin.x) + (viewMatrix.m12 * origin.y) + (viewMatrix.m13 * origin.z) + viewMatrix.m14;
+		float screenY = (viewMatrix.m21 * origin.x) + (viewMatrix.m22 * origin.y) + (viewMatrix.m23 * origin.z) + viewMatrix.m24;
+
+		float cameraX = width / 2;
+		float cameraY = height / 2;
+
+		float X = cameraX + (cameraX * screenX / screenW);
+		float Y = cameraY - (cameraY * screenY / screenW);
+
+		ScreenCoordinates screenCoordinates;
+		screenCoordinates.X = X;
+		screenCoordinates.Y = Y;
+
+		return screenCoordinates;
+	}
+}
+
+
+std::vector<fullBodyCoordinates> Cheats::ESP()
 {
 	const auto client = GetClientDll();
 
@@ -68,7 +98,7 @@ std::vector<ScreenCoordinates> Cheats::ESP()
 		const int localTeam = *reinterpret_cast<int*>(localPlayer + Offsets::iTeamNum);
 		const float localOrigin = *reinterpret_cast<float*>(localPlayer + Offsets::m_vecOrigin);
 
-		std::vector<ScreenCoordinates> screenCoordinatesVector;
+		std::vector<fullBodyCoordinates> screenCoordinatesVector;
 
 		for (int i = 0; i < 64; i++)
 		{
@@ -120,51 +150,20 @@ std::vector<ScreenCoordinates> Cheats::ESP()
 				continue;
 			}
 
-			struct Vector3
-			{
-				float x;
-				float y;
-				float z;
-			};
-
 			const Vector3 origin = *reinterpret_cast<Vector3*>(pCSPlayerPawn + Offsets::m_vecOrigin);
-
-			struct Matrix
-			{
-				float m11, m12, m13, m14;
-				float m21, m22, m23, m24;
-				float m31, m32, m33, m34;
-				float m41, m42, m43, m44;
-			};
-
+			const Vector3 head = {origin.x, origin.y, origin.z + 75.f};
 			const Matrix viewMatrix = *reinterpret_cast<Matrix*>(client + Offsets::dwViewMatrix);
 
-			RECT desktop;
-			const HWND hDesktop = GetDesktopWindow();
-			GetWindowRect(hDesktop, &desktop);
+			auto feetCoordinates = worldToScreen(viewMatrix, origin);
+			auto headCoordinates = worldToScreen(viewMatrix, head);
 
-			const int width = desktop.right;
-			const int height = desktop.bottom;
+			fullBodyCoordinates coordinates;
+			coordinates.feetX = feetCoordinates.X;
+			coordinates.feetY = feetCoordinates.Y;
+			coordinates.headX = headCoordinates.X;
+			coordinates.headY = headCoordinates.Y;
 
-			float screenW = (viewMatrix.m41 * origin.x) + (viewMatrix.m42 * origin.y) + (viewMatrix.m43 * origin.z) + viewMatrix.m44;
-
-			if (screenW > 0.001f)
-			{
-				float screenX = (viewMatrix.m11 * origin.x) + (viewMatrix.m12 * origin.y) + (viewMatrix.m13 * origin.z) + viewMatrix.m14;
-				float screenY = (viewMatrix.m21 * origin.x) + (viewMatrix.m22 * origin.y) + (viewMatrix.m23 * origin.z) + viewMatrix.m24;
-
-				float cameraX = width / 2;
-				float cameraY = height / 2;
-
-				float X = cameraX + (cameraX * screenX / screenW);
-				float Y = cameraY - (cameraY * screenY / screenW);
-
-				ScreenCoordinates screenCoordinates;
-				screenCoordinates.X = X;
-				screenCoordinates.Y = Y;
-
-				screenCoordinatesVector.push_back(screenCoordinates);
-			}
+			screenCoordinatesVector.push_back(coordinates);
 		}
 		return screenCoordinatesVector;
 	}

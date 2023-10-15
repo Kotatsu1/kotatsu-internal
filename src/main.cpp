@@ -213,19 +213,20 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 
 	ImGui::End();
 
-	if (Globals::esp)
-	{
-		ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+if (Globals::esp)
+{
+    ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
-		auto coords = cheats.ESP();
-		for (auto& pos : coords)
-		{
-			float size = 20.0f;
-			ImVec2 p1(pos.X, pos.Y);
-			ImVec2 p2(pos.X + size, pos.Y + size);
-			drawList->AddRectFilled(p1, p2, IM_COL32(255, 0, 0, 255));
-		}
-	}
+    auto coords = cheats.ESP();
+    for (auto& pos : coords)
+    {
+        float height = pos.feetY - pos.headY;
+		float width = height / 3.5f;
+        ImVec2 p1(pos.feetX + width, pos.feetY);
+        ImVec2 p2(pos.headX - width, pos.headY);
+        drawList->AddRect(p1, p2, IM_COL32(180, 90, 220, 255));
+    }
+}
 
 
 	ImGui::Render();

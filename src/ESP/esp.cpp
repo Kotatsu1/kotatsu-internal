@@ -1,60 +1,8 @@
-#include "cheats.h"
-#include "offsets.h"
-#include "globals.h"
+#include "esp.h"
+#include "../offsets.h"
+#include "../globals.h"
 #include <windows.h>
-#include <thread>
-#include <cstdint>
-#include <cstdlib>
-#include <cstdio>
-#include <vector>
 
-
-uintptr_t Cheats::GetClientDll()
-{
-	const auto client = reinterpret_cast<uintptr_t>(GetModuleHandle("client.dll"));
-
-	return client;
-}
-
-
-void Cheats::GetMyHealth()
-{
-	const auto client = GetClientDll();
-
-	const auto localPlayer = *reinterpret_cast<uintptr_t*>(client + Offsets::dwLocalPlayerController);
-
-	const auto health = *reinterpret_cast<uintptr_t*>(localPlayer + Offsets::m_iHealth);
-	printf("%d\n", health);
-}
-
-
-void Cheats::BHopThread()
-{
-	const auto client = GetClientDll();
-
-	while (Globals::bhop)
-	{
-		const auto localPlayerPawn = *reinterpret_cast<uintptr_t*>(client + Offsets::dwLocalPlayerPawn);
-		const auto flags = *reinterpret_cast<uint32_t*>(localPlayerPawn + Offsets::m_fFlags);
-
-		if (GetAsyncKeyState(VK_SPACE) && flags & (1 << 0))
-		{
-			*reinterpret_cast<int*>(client + Offsets::dwForceJump) = 65537;
-		}
-		else
-		{
-			*reinterpret_cast<int*>(client + Offsets::dwForceJump) = 256;
-		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-	}
-}
-
-
-void Cheats::BHop()
-{
-	std::thread bhopThread(&Cheats::BHopThread, this);
-	bhopThread.detach();
-}
 
 ScreenCoordinates worldToScreen(Matrix viewMatrix, Vector3 origin)
 {
@@ -87,9 +35,9 @@ ScreenCoordinates worldToScreen(Matrix viewMatrix, Vector3 origin)
 }
 
 
-std::vector<espData> Cheats::ESP()
+std::vector<espData> ESP::GetESPData()
 {
-	const auto client = GetClientDll();
+	const auto client = reinterpret_cast<uintptr_t>(GetModuleHandle("client.dll"));
 
 	if (Globals::esp)
 	{
@@ -100,7 +48,7 @@ std::vector<espData> Cheats::ESP()
 
 		std::vector<espData> espDataVector;
 
-		for (int i = 0; i < 64; i++)
+		for (int i = 0; i < 64; i++) // 64
 		{
 
 			const auto listEntry = *reinterpret_cast<uintptr_t*>(entityList + 0x8 * ((i & 0x7FFF) >> 9) + 16);
@@ -116,10 +64,13 @@ std::vector<espData> Cheats::ESP()
 				continue;
 			}
 
+			if (!Globals::allTeams)
+			{
 			const int playerTeam = *reinterpret_cast<int*>(player + Offsets::iTeamNum);
 			if (playerTeam == localTeam)
 			{
 				continue;
+			}
 			}
 
 			const std::uintptr_t playerPawn = *reinterpret_cast<std::uintptr_t*>(player + Offsets::dwPlayerPawn);
@@ -166,6 +117,7 @@ std::vector<espData> Cheats::ESP()
 
 			espDataVector.push_back(espData);
 		}
+		
 		return espDataVector;
 	}
 }

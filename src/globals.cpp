@@ -4,7 +4,7 @@
 namespace Globals
 {
 	int tab;
-	int hp_range;
 	bool bhop = false;
 	bool esp = false;
+	bool allTeams = false;
 }

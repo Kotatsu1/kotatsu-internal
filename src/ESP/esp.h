@@ -33,12 +33,8 @@ extern struct Vector3
 };
 
 
-class Cheats
+class ESP
 {
 public:
-	uintptr_t GetClientDll();
-	void GetMyHealth();
-	void BHop();
-	void BHopThread();
-	 std::vector<espData> ESP();
+	std::vector<espData> GetESPData();
 };

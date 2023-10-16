@@ -1,7 +1,7 @@
 #include "includes.h"
 #include "offsets.h"
 #include "globals.h"
-#include "cheats.h"
+//#include "cheats.h"
 #include <cstdio>
 #include <thread>
 #include <vector>
@@ -9,6 +9,9 @@
 #include "Logo.hpp"
 #include <D3DX11tex.h>
 #pragma comment (lib, "D3DX11.lib")
+
+#include "BHOP/bhop.h"
+#include "ESP/esp.h"
 
 
 HMODULE hModule;
@@ -129,7 +132,7 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 	ImGui::Image((void*)ImageResource, image_size);
 
 
-	static auto cheats = Cheats();
+	//static auto cheats = Cheats();
 
 	{ImGui::NewLine();
 	ImGui::PushStyleColor(ImGuiCol_Button, tabButtonColor);
@@ -173,12 +176,6 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 		if (bhopButton)
 		{
 			Globals::bhop = !Globals::bhop;
-			cheats.BHop();
-		}
-		ImGui::NewLine();
-		if (ImGui::Button(("Print health"), ImVec2(130, 40)))
-		{
-			cheats.GetMyHealth();
 		}
 
 		ImGui::NewLine();
@@ -191,6 +188,17 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 		if (espButton)
 		{
 			Globals::esp = !Globals::esp;
+		}
+		ImGui::SameLine();
+		ImVec4 allTeamsButtonColor = Globals::allTeams ? buttonOnColor : buttonOffColor;
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, allTeamsButtonColor);
+		ImGui::PushStyleColor(ImGuiCol_Button, allTeamsButtonColor);
+		auto allTeamsButton = ImGui::Button(("All Teams ESP"), ImVec2(130, 40));
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+		if (allTeamsButton)
+		{
+			Globals::allTeams = !Globals::allTeams;
 		}
 	}
 
@@ -213,35 +221,44 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 
 	ImGui::End();
 
-if (Globals::esp)
-{
-    ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
-    auto espData = cheats.ESP();
-    for (auto& data : espData)
-    {
-        float height = data.feetY - data.headY;
-		float width = height / 3.5f;
-		float hpPercent = data.health / 100.f;
+	if (Globals::bhop)
+	{
+		auto bhop = BHOP();
+		bhop.BHop();
+	}
 
-        ImVec2 point1(data.feetX + width, data.feetY);
-        ImVec2 point2(data.headX - width, data.headY);
-		ImVec2 healthPoint1(data.feetX - width, data.feetY);
-		ImVec2 healthPoint2(data.feetX - width, data.headY + height - hpPercent * height);
 
-		ImVec4 greenColor(0.0f, 1.0f, 0.0f, 1.0f);
-		ImVec4 redColor(1.0f, 0.0f, 0.0f, 1.0f);
-		ImVec4 interpolatedColor;
-		interpolatedColor.x = redColor.x + (greenColor.x - redColor.x) * hpPercent;
-		interpolatedColor.y = redColor.y + (greenColor.y - redColor.y) * hpPercent;
-		interpolatedColor.z = redColor.z + (greenColor.z - redColor.z) * hpPercent;
-		interpolatedColor.w = redColor.w + (greenColor.w - redColor.w) * hpPercent;
+	if (Globals::esp)
+	{
+		ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
-        drawList->AddRect(point1, point2, IM_COL32(180, 90, 220, 255));
-		drawList->AddLine(healthPoint1, healthPoint2, ImGui::ColorConvertFloat4ToU32(interpolatedColor), 2.f);
-    }
+		auto esp = ESP();
 
-}
+		auto espData = esp.GetESPData();
+		for (auto& data : espData)
+		{
+			float height = data.feetY - data.headY;
+			float width = height / 3.5f;
+			float hpPercent = data.health / 100.f;
+
+			ImVec2 point1(data.feetX + width, data.feetY);
+			ImVec2 point2(data.headX - width, data.headY);
+			ImVec2 healthPoint1(data.feetX - width, data.feetY);
+			ImVec2 healthPoint2(data.feetX - width, data.headY + height - hpPercent * height);
+
+			ImVec4 greenColor(0.0f, 1.0f, 0.0f, 1.0f);
+			ImVec4 redColor(1.0f, 0.0f, 0.0f, 1.0f);
+			ImVec4 interpolatedColor;
+			interpolatedColor.x = redColor.x + (greenColor.x - redColor.x) * hpPercent;
+			interpolatedColor.y = redColor.y + (greenColor.y - redColor.y) * hpPercent;
+			interpolatedColor.z = redColor.z + (greenColor.z - redColor.z) * hpPercent;
+			interpolatedColor.w = redColor.w + (greenColor.w - redColor.w) * hpPercent;
+
+			drawList->AddRect(point1, point2, IM_COL32(180, 90, 220, 255));
+			drawList->AddLine(healthPoint1, healthPoint2, ImGui::ColorConvertFloat4ToU32(interpolatedColor), 2.f);
+		}
+	}
 
 
 	ImGui::Render();

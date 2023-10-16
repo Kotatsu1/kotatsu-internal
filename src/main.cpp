@@ -222,17 +222,23 @@ if (Globals::esp)
     {
         float height = data.feetY - data.headY;
 		float width = height / 3.5f;
-        ImVec2 p1(data.feetX + width, data.feetY);
-        ImVec2 p2(data.headX - width, data.headY);
-
-
 		float hpPercent = data.health / 100.f;
-		ImVec2 health1(data.feetX - width, data.feetY);
-		ImVec2 health2(data.feetX - width, data.headY + height - hpPercent * height);
 
+        ImVec2 point1(data.feetX + width, data.feetY);
+        ImVec2 point2(data.headX - width, data.headY);
+		ImVec2 healthPoint1(data.feetX - width, data.feetY);
+		ImVec2 healthPoint2(data.feetX - width, data.headY + height - hpPercent * height);
 
-        drawList->AddRect(p1, p2, IM_COL32(180, 90, 220, 255));
-		drawList->AddRect(health1, health2, IM_COL32(255, 0, 0, 255));
+		ImVec4 greenColor(0.0f, 1.0f, 0.0f, 1.0f);
+		ImVec4 redColor(1.0f, 0.0f, 0.0f, 1.0f);
+		ImVec4 interpolatedColor;
+		interpolatedColor.x = redColor.x + (greenColor.x - redColor.x) * hpPercent;
+		interpolatedColor.y = redColor.y + (greenColor.y - redColor.y) * hpPercent;
+		interpolatedColor.z = redColor.z + (greenColor.z - redColor.z) * hpPercent;
+		interpolatedColor.w = redColor.w + (greenColor.w - redColor.w) * hpPercent;
+
+        drawList->AddRect(point1, point2, IM_COL32(180, 90, 220, 255));
+		drawList->AddLine(healthPoint1, healthPoint2, ImGui::ColorConvertFloat4ToU32(interpolatedColor), 2.f);
     }
 
 }

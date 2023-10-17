@@ -21,4 +21,5 @@ namespace Offsets
 	constexpr auto dwPlayerPawn = 0x7BC;
 	constexpr auto m_sSanitizedPlayerName = 0x720;
 
+	constexpr auto dwForceAttack = 0x1696DF0;
 }

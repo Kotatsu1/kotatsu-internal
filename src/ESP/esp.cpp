@@ -48,7 +48,7 @@ std::vector<espData> ESP::GetESPData()
 
 		std::vector<espData> espDataVector;
 
-		for (int i = 0; i < 64; i++) // 64
+		for (int i = 0; i < 64; i++)
 		{
 
 			const auto listEntry = *reinterpret_cast<uintptr_t*>(entityList + 0x8 * ((i & 0x7FFF) >> 9) + 16);
@@ -97,6 +97,11 @@ std::vector<espData> ESP::GetESPData()
 			}
 
 			if (pCSPlayerPawn == localPlayer)
+			{
+				continue;
+			}
+
+			if (player == localPlayer)
 			{
 				continue;
 			}

@@ -113,113 +113,136 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 	auto tabButtonColor = ImVec4(130 / 255.0f, 90 / 255.0f, 220 / 255.0f, 255 / 255.0f);
 
 
+	ImGuiIO& io = ImGui::GetIO();
+	if (io.KeysDown[73])
+	{
+		if (!Globals::menuKeyPressed)
+		{
+			Globals::menuOpened = !Globals::menuOpened;
+			Globals::menuKeyPressed = true;
+		}
+	}
+	else
+	{
+		Globals::menuKeyPressed = false;
+	}
+
+
 	ImGui::NewFrame();
-	ImGui::SetNextWindowSize(ImVec2(450, 600));
-	ImGui::Begin(
-		("Kotatsu Internal"), 
-		NULL, 
-		ImGuiWindowFlags_NoResize | 
-		ImGuiWindowFlags_NoCollapse | 
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoTitleBar 
-	);
-	
-	ImVec2 image_size{ 450, 100 };
-	ImVec2 window_size{ ImGui::GetWindowSize() };
-	ImVec2 window_pos{ ImGui::GetWindowPos() };
-	ImVec2 cursor_pos{ ImGui::GetCursorPos() };
 
-	ImGui::Image((void*)ImageResource, image_size);
-
-
-	//static auto cheats = Cheats();
-
-	{ImGui::NewLine();
-	ImGui::PushStyleColor(ImGuiCol_Button, tabButtonColor);
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, tabButtonColor);
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, tabButtonColor);
-	auto mainTabButton = ImGui::Button(("Main"), ImVec2(130, 35));
-	ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
-	if (mainTabButton)
+	if (Globals::menuOpened)
 	{
-		Globals::tab = 0;
-	}
+		ImGui::SetNextWindowSize(ImVec2(450, 600));
+		ImGui::Begin(
+			("Kotatsu Internal"), 
+			NULL, 
+			ImGuiWindowFlags_NoResize | 
+			ImGuiWindowFlags_NoCollapse | 
+			ImGuiWindowFlags_NoMove |
+			ImGuiWindowFlags_NoTitleBar 
+		);
+		
+		ImVec2 image_size{ 450, 100 };
+		ImVec2 window_size{ ImGui::GetWindowSize() };
+		ImVec2 window_pos{ ImGui::GetWindowPos() };
+		ImVec2 cursor_pos{ ImGui::GetCursorPos() };
 
+		ImGui::Image((void*)ImageResource, image_size);
 
-	ImGui::SameLine();
-	ImGui::PushStyleColor(ImGuiCol_Button, tabButtonColor);
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, tabButtonColor);
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, tabButtonColor);
-	auto miscTabButton = ImGui::Button(("Misc"), ImVec2(130, 35));
-	ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
-	if (miscTabButton)
-	{
-		Globals::tab = 1;
-	}
-	}
-	ImGui::Separator();
-
-
-	if (Globals::tab == 0)
-	{
-		ImGui::NewLine();
-		ImVec4 bhopButtonColor = Globals::bhop ? buttonOnColor : buttonOffColor;
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, bhopButtonColor);
-		ImGui::PushStyleColor(ImGuiCol_Button, bhopButtonColor);
-		auto bhopButton = ImGui::Button(("BHop"), ImVec2(130, 40));
+		{ImGui::NewLine();
+		ImGui::PushStyleColor(ImGuiCol_Button, tabButtonColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, tabButtonColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, tabButtonColor);
+		auto mainTabButton = ImGui::Button(("Main"), ImVec2(130, 35));
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
-		if (bhopButton)
+		ImGui::PopStyleColor();
+		if (mainTabButton)
 		{
-			Globals::bhop = !Globals::bhop;
+			Globals::tab = 0;
 		}
 
-		ImGui::NewLine();
-		ImVec4 espButtonColor = Globals::esp ? buttonOnColor : buttonOffColor;
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, espButtonColor);
-		ImGui::PushStyleColor(ImGuiCol_Button, espButtonColor);
-		auto espButton = ImGui::Button(("ESP"), ImVec2(130, 40));
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-		if (espButton)
-		{
-			Globals::esp = !Globals::esp;
-		}
+
 		ImGui::SameLine();
-		ImVec4 allTeamsButtonColor = Globals::allTeams ? buttonOnColor : buttonOffColor;
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, allTeamsButtonColor);
-		ImGui::PushStyleColor(ImGuiCol_Button, allTeamsButtonColor);
-		auto allTeamsButton = ImGui::Button(("All Teams ESP"), ImVec2(130, 40));
+		ImGui::PushStyleColor(ImGuiCol_Button, tabButtonColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, tabButtonColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, tabButtonColor);
+		auto miscTabButton = ImGui::Button(("Misc"), ImVec2(130, 35));
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
-		if (allTeamsButton)
+		ImGui::PopStyleColor();
+		if (miscTabButton)
 		{
-			Globals::allTeams = !Globals::allTeams;
+			Globals::tab = 1;
 		}
+		}
+		ImGui::Separator();
+
+
+		if (Globals::tab == 0)
+		{
+			ImGui::NewLine();
+			ImVec4 bhopButtonColor = Globals::bhop ? buttonOnColor : buttonOffColor;
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, bhopButtonColor);
+			ImGui::PushStyleColor(ImGuiCol_Button, bhopButtonColor);
+			auto bhopButton = ImGui::Button(("BHop"), ImVec2(130, 40));
+			ImGui::PopStyleColor();
+			ImGui::PopStyleColor();
+			if (bhopButton)
+			{
+				Globals::bhop = !Globals::bhop;
+			}
+
+			ImGui::NewLine();
+			ImVec4 espButtonColor = Globals::esp ? buttonOnColor : buttonOffColor;
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, espButtonColor);
+			ImGui::PushStyleColor(ImGuiCol_Button, espButtonColor);
+			auto espButton = ImGui::Button(("ESP"), ImVec2(130, 40));
+			ImGui::PopStyleColor();
+			ImGui::PopStyleColor();
+			if (espButton)
+			{
+				Globals::esp = !Globals::esp;
+			}
+			ImGui::SameLine();
+			ImVec4 allTeamsButtonColor = Globals::allTeams ? buttonOnColor : buttonOffColor;
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, allTeamsButtonColor);
+			ImGui::PushStyleColor(ImGuiCol_Button, allTeamsButtonColor);
+			auto allTeamsButton = ImGui::Button(("All Teams ESP"), ImVec2(130, 40));
+			ImGui::PopStyleColor();
+			ImGui::PopStyleColor();
+			if (allTeamsButton)
+			{
+				Globals::allTeams = !Globals::allTeams;
+			}
+		}
+
+		// const auto client = reinterpret_cast<uintptr_t>(GetModuleHandle("client.dll"));
+		// *reinterpret_cast<int*>(client + Offsets::dwForceAttack) = 256;
+
+		if (Globals::tab == 1)
+		{
+			ImGui::NewLine();
+			if (ImGui::Button(("Clear console"), ImVec2(130, 40)))
+			{
+				system("cls");
+				printf("Kotatsu internal\n");
+			}
+			ImGui::NewLine();
+			if (ImGui::Button(("Deattach"), ImVec2(130, 40)))
+			{
+				kiero::shutdown();
+				std::thread(unload_module).detach();
+			}
+			ImGui::NewLine();
+			if (ImGui::Button(("Fire"), ImVec2(130, 40)))
+			{
+				// const auto client = reinterpret_cast<uintptr_t>(GetModuleHandle("client.dll"));
+				// *reinterpret_cast<int*>(client + Offsets::dwForceAttack) = 65537;
+			}
+		}
+		ImGui::End();
 	}
-
-
-	if (Globals::tab == 1)
-	{
-		ImGui::NewLine();
-		if (ImGui::Button(("Clear console"), ImVec2(130, 40)))
-		{
-			system("cls");
-			printf("Kotatsu internal\n");
-		}
-		ImGui::NewLine();
-		if (ImGui::Button(("Deattach"), ImVec2(130, 40)))
-		{
-			kiero::shutdown();
-			std::thread(unload_module).detach();
-		}
-	}
-
-	ImGui::End();
 
 
 	if (Globals::bhop)
@@ -247,6 +270,9 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 			ImVec2 healthPoint1(data.feetX - width, data.feetY);
 			ImVec2 healthPoint2(data.feetX - width, data.headY + height - hpPercent * height);
 
+			ImVec2 headPoint1(data.headX + width / 3, data.headY + height / 5);
+			ImVec2 headPoint2(data.headX - width / 3, data.headY);
+
 			ImVec4 greenColor(0.0f, 1.0f, 0.0f, 1.0f);
 			ImVec4 redColor(1.0f, 0.0f, 0.0f, 1.0f);
 			ImVec4 interpolatedColor;
@@ -256,6 +282,7 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 			interpolatedColor.w = redColor.w + (greenColor.w - redColor.w) * hpPercent;
 
 			drawList->AddRect(point1, point2, IM_COL32(180, 90, 220, 255));
+			drawList->AddRect(headPoint1, headPoint2, IM_COL32(255, 0, 0, 255));
 			drawList->AddLine(healthPoint1, healthPoint2, ImGui::ColorConvertFloat4ToU32(interpolatedColor), 2.f);
 		}
 	}

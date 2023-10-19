@@ -138,7 +138,7 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 			NULL, 
 			ImGuiWindowFlags_NoResize | 
 			ImGuiWindowFlags_NoCollapse | 
-			ImGuiWindowFlags_NoMove |
+			//ImGuiWindowFlags_NoMove |
 			ImGuiWindowFlags_NoTitleBar 
 		);
 		

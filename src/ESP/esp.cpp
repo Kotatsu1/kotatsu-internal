@@ -44,7 +44,7 @@ std::vector<espData> ESP::GetESPData()
 		const auto entityList = *reinterpret_cast<uintptr_t*>(client + Offsets::dwEntityList);
 		const auto localPlayer = *reinterpret_cast<uintptr_t*>(client + Offsets::dwLocalPlayerController);
 		const int localTeam = *reinterpret_cast<int*>(localPlayer + Offsets::iTeamNum);
-		const float localOrigin = *reinterpret_cast<float*>(localPlayer + Offsets::m_vecOrigin);
+		const float localOrigin = *reinterpret_cast<float*>(localPlayer + Offsets::m_vOldOrigin);
 
 		std::vector<espData> espDataVector;
 
@@ -73,7 +73,7 @@ std::vector<espData> ESP::GetESPData()
 			}
 			}
 
-			const std::uintptr_t playerPawn = *reinterpret_cast<std::uintptr_t*>(player + Offsets::dwPlayerPawn);
+			const std::uintptr_t playerPawn = *reinterpret_cast<std::uintptr_t*>(player + Offsets::m_hPlayerPawn);
 
 			const uintptr_t listEntry2 = *reinterpret_cast<uintptr_t*>(entityList + 0x8 * ((playerPawn & 0x7FFF) >> 9) + 16);
 
@@ -106,7 +106,7 @@ std::vector<espData> ESP::GetESPData()
 				continue;
 			}
 
-			const Vector3 origin = *reinterpret_cast<Vector3*>(pCSPlayerPawn + Offsets::m_vecOrigin);
+			const Vector3 origin = *reinterpret_cast<Vector3*>(pCSPlayerPawn + Offsets::m_vOldOrigin);
 			const Vector3 head = {origin.x, origin.y, origin.z + 75.f};
 			const Matrix viewMatrix = *reinterpret_cast<Matrix*>(client + Offsets::dwViewMatrix);
 
